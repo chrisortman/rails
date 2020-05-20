@@ -2,6 +2,10 @@
 
     *Mark Haussmann*
 
+*   Add Amazon SES/SNS ingress.
+
+    *Bob Farrell*
+
 *   Update Mandrill inbound email route to respond appropriately to HEAD requests for URL health checks from Mandrill.
 
     *Bill Cromie*
