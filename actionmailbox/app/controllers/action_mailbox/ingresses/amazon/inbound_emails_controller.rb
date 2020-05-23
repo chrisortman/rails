@@ -5,7 +5,7 @@ module ActionMailbox
   #
   # Subscription requests must provide the following parameters in a JSON body:
   # - +Message+: Notification content
-  # - +MessagId+: Notification unique identifier
+  # - +MessageId+: Notification unique identifier
   # - +Timestamp+: iso8601 timestamp
   # - +TopicArn+: Topic identifier
   # - +Type+: Type of event ("Subscription")
