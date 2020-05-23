@@ -8,15 +8,14 @@ module ActionMailbox
   # - +MessageId+: Notification unique identifier
   # - +Timestamp+: iso8601 timestamp
   # - +TopicArn+: Topic identifier
-  # - +Type+: Type of event ("Subscription")
+  # - +Type+: Type of event ("SubscriptionConfirmation")
   #
   # Inbound email events must provide the following parameters in a JSON body:
   # - +Message+: Notification content
   # - +MessageId+: Notification unique identifier
   # - +Timestamp+: iso8601 timestamp
-  # - +SubscribeURL+: Topic identifier
   # - +TopicArn+: Topic identifier
-  # - +Type+: Type of event ("SubscriptionConfirmation")
+  # - +Type+: Type of event ("Notification")
   #
   # All requests are authenticated by validating the provided AWS signature.
   #
@@ -29,30 +28,30 @@ module ActionMailbox
   #
   # == Usage
   #
-  # 1. Install the {aws-sdk-sns}[https://rubygems.org/gems/aws-sdk-sns] gem:
+  # 1. {Configure SES}[https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-notifications.html] to route emails through SNS. Take note of the topic unique reference (+TopicArn+).
+  #
+  #    {Configure SNS}[https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-action-sns.html] to send notifications to +/rails/action_mailbox/amazon/inbound_emails+.
+  #
+  #    If your application is found at <tt>https://example.com</tt> you would specify the fully-qualified URL <tt>https://example.com/rails/action_mailbox/amazon/inbound_emails</tt>.
+  #
+  # 2. Install the {aws-sdk-sns}[https://rubygems.org/gems/aws-sdk-sns] gem:
   #
   #        # Gemfile
   #        gem "aws-sdk-sns", "~> 1.9", require: false
   #
-  # 2. Tell Action Mailbox to accept emails from Amazon SES:
+  # 3. Tell Action Mailbox to accept notifications from Amazon:
   #
   #        # config/environments/production.rb
   #        config.action_mailbox.ingress = :amazon
   #
-  # 3. Configure which SNS topics will be accepted:
+  # 4. Configure which SNS topics will be accepted:
   #
   #        config.action_mailbox.amazon.subscribed_topics = %w(
   #          arn:aws:sns:eu-west-1:123456789001:example-topic-1
   #          arn:aws:sns:us-east-1:123456789002:example-topic-2
   #        )
   #
-  # 4. {Configure SES}[https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-notifications.html]
-  #    to route emails through SNS.
-  #
-  #    Configure SNS to send emails to +/rails/action_mailbox/amazon/inbound_emails+.
-  #
-  #    If your application is found at <tt>https://example.com</tt> you would
-  #    specify the fully-qualified URL <tt>https://example.com/rails/action_mailbox/amazon/inbound_emails</tt>.
+  # Your application is now ready to accept confirmation requests and email notifications.
   #
   module Ingresses
     module Amazon

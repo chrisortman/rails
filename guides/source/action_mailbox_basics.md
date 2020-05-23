@@ -267,6 +267,12 @@ NOTE: When configuring your SendGrid Inbound Parse webhook, be sure to check the
 
 ### Amazon
 
+[Configure SES](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-notifications.html) to route emails through _SNS_. Take note of the topic unique reference (`TopicArn`).
+
+[Configure SNS](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-action-sns.html) to send notifications to `/rails/action_mailbox/amazon/inbound_emails`.
+
+If your application is found at https://example.com you would specify the fully-qualified URL https://example.com/rails/action_mailbox/amazon/inbound_emails
+
 Install the [aws-sdk-sns](https://rubygems.org/gems/aws-sdk-sns) gem:
 
 ```ruby
@@ -274,7 +280,7 @@ Install the [aws-sdk-sns](https://rubygems.org/gems/aws-sdk-sns) gem:
 gem "aws-sdk-sns", "~> 1.9", require: false
 ```
 
-Tell Action Mailbox to accept emails from _Amazon_:
+Tell Action Mailbox to accept notifications from _Amazon_:
 
 ```ruby
 # config/environments/production.rb
@@ -291,11 +297,7 @@ config.action_mailbox.amazon.subscribed_topics = %w(
 )
 ```
 
-[Configure SES](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-notifications.html) to route emails through _SNS_.
-
-[Configure SNS](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-action-sns.html) to send emails to `/rails/action_mailbox/amazon/inbound_emails`.
-
-If your application is found at https://example.com you would specify the fully-qualified URL https://example.com/rails/action_mailbox/amazon/inbound_emails
+Your application is now ready to accept confirmation requests and email notifications.
 
 ## Examples
 
