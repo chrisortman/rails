@@ -12,7 +12,7 @@ module ActionMailbox
   #
   # Inbound email events must provide the following parameters in a JSON body:
   # - +Message+: Notification content
-  # - +MessagId+: Notification unique identifier
+  # - +MessageId+: Notification unique identifier
   # - +Timestamp+: iso8601 timestamp
   # - +SubscribeURL+: Topic identifier
   # - +TopicArn+: Topic identifier
