@@ -38,6 +38,4 @@ Gem::Specification.new do |s|
   s.add_dependency "actionpack",    version
 
   s.add_dependency "mail", ">= 2.7.1"
-
-  s.add_development_dependency "aws-sdk-sns", "~> 1.21"
 end
