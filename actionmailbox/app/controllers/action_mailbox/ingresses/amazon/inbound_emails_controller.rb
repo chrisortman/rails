@@ -58,7 +58,6 @@ module ActionMailbox
       class InboundEmailsController < ActionMailbox::BaseController
         before_action :verify_authenticity
         before_action :validate_topic
-        before_action :confirm_subscription
 
         def create
           head :bad_request unless mail.present?
@@ -67,18 +66,17 @@ module ActionMailbox
           head :no_content
         end
 
+        def subscribe
+          return head :ok if confirmation_response_code&.start_with?("2")
+
+          Rails.logger.error("SNS subscription confirmation request rejected.")
+          head :unprocessable_entity
+        end
+
         private
           def verify_authenticity
             head :bad_request unless notification.present?
             head :unauthorized unless verified?
-          end
-
-          def confirm_subscription
-            return unless notification["Type"] == "SubscriptionConfirmation"
-            return head :ok if confirmation_response_code&.start_with?("2")
-
-            Rails.logger.error("SNS subscription confirmation request rejected.")
-            head :unprocessable_entity
           end
 
           def validate_topic
