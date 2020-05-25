@@ -7,8 +7,8 @@ class ActionMailbox::Ingresses::Amazon::InboundEmailsControllerTest < ActionDisp
     file_fixture("../files/amazon/#{name}").read
   end
 
-  def post_json(path, payload)
-    post path, params: payload, headers: { "Content-Type" => "application/json" }
+  def json_fixture(name)
+    JSON.parse(fixture("#{name}.json"))
   end
 
   setup do
@@ -20,22 +20,22 @@ class ActionMailbox::Ingresses::Amazon::InboundEmailsControllerTest < ActionDisp
     )
     pem_url = "https://sns.eu-west-1.amazonaws.com/SimpleNotificationService-a86cb10b4e1f29c941702d737128f7b6.pem"
     stub_request(:get, pem_url).and_return(body: fixture("certificate.pem"))
-    @inbound = fixture("inbound_email.json")
-    @invalid_signature = fixture("invalid_signature.json")
-    @valid_signature = fixture("valid_signature.json")
-    @recognized_topic = fixture("recognized_topic_subscription_request.json")
-    @unrecognized_topic = fixture("unrecognized_topic_subscription_request.json")
+    @inbound = json_fixture("inbound_email")
+    @invalid_signature = json_fixture("invalid_signature")
+    @valid_signature = json_fixture("valid_signature")
+    @recognized_topic = json_fixture("recognized_topic_subscription_request")
+    @unrecognized_topic = json_fixture("unrecognized_topic_subscription_request")
   end
 
   test "receiving an inbound email from Amazon" do
     assert_difference -> { ActionMailbox::InboundEmail.count }, +1 do
-      post_json rails_amazon_inbound_emails_url, @inbound
+      post rails_amazon_inbound_emails_url, params: @inbound, as: :json
     end
 
     assert_response :no_content
 
     inbound_email = ActionMailbox::InboundEmail.last
-    content = JSON.parse(JSON.parse(@inbound)["Message"])["content"]
+    content = JSON.parse(@inbound["Message"])["content"]
     assert_equal inbound_email.raw_email.download, content
     id = "CA+X1WqWD+ZHUimo+gm+=TZt7haLJv9G7LjG4M-wu5ka=CwxpYQ@mail.gmail.com"
     assert_equal inbound_email.message_id, id
@@ -49,28 +49,28 @@ class ActionMailbox::Ingresses::Amazon::InboundEmailsControllerTest < ActionDisp
     }
     query = Rack::Utils.build_query(params)
     request = stub_request(:get, "https://sns.eu-west-1.amazonaws.com/?#{query}")
-    post_json rails_amazon_inbound_emails_url, @recognized_topic
+    post rails_amazon_inbound_emails_url, params: @recognized_topic, as: :json
     assert_requested request
   end
 
   test "rejecting subscriptions to unrecognized topics" do
     url = %r{https://sns.eu-west-1.amazonaws.com/\?Action=ConfirmSubscription}
     request = stub_request(:get, url)
-    post_json rails_amazon_inbound_emails_url, @unrecognized_topic
+    post rails_amazon_inbound_emails_url, params: @unrecognized_topic, as: :json
     assert_not_requested request
   end
 
   test "rejecting subscriptions with invalid signatures" do
     url = %r{https://sns.eu-west-1.amazonaws.com/\?Action=ConfirmSubscription}
     request = stub_request(:get, url)
-    post_json rails_amazon_inbound_emails_url, @invalid_signature
+    post rails_amazon_inbound_emails_url, params: @invalid_signature, as: :json
     assert_not_requested request
   end
 
   test "accepting subscriptions with valid signatures" do
     url = %r{https://sns.eu-west-1.amazonaws.com/\?Action=ConfirmSubscription}
     request = stub_request(:get, url)
-    post_json rails_amazon_inbound_emails_url, @valid_signature
+    post rails_amazon_inbound_emails_url, params: @valid_signature, as: :json
     assert_requested request
   end
 end
