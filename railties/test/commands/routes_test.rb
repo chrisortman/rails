@@ -69,7 +69,7 @@ rails_blob_representation_proxy GET  /rails/active_storage/representations/proxy
               rails_postmark_inbound_emails POST /rails/action_mailbox/postmark/inbound_emails(.:format)             action_mailbox/ingresses/postmark/inbound_emails#create
                  rails_relay_inbound_emails POST /rails/action_mailbox/relay/inbound_emails(.:format)                action_mailbox/ingresses/relay/inbound_emails#create
               rails_sendgrid_inbound_emails POST /rails/action_mailbox/sendgrid/inbound_emails(.:format)             action_mailbox/ingresses/sendgrid/inbound_emails#create
-          rails_amazon_inbound_subscription POST /rails/action_mailbox/amazon/inbound_emails(.:format)               action_mailbox/ingresses/amazon/inbound_emails#subscribe
+                 rails_amazon_confirmations POST /rails/action_mailbox/amazon/inbound_emails(.:format)               action_mailbox/ingresses/amazon/confirmations#create
                 rails_amazon_inbound_emails POST /rails/action_mailbox/amazon/inbound_emails(.:format)               action_mailbox/ingresses/amazon/inbound_emails#create
               rails_mandrill_inbound_emails POST /rails/action_mailbox/mandrill/inbound_emails(.:format)             action_mailbox/ingresses/mandrill/inbound_emails#create
                rails_mailgun_inbound_emails POST /rails/action_mailbox/mailgun/inbound_emails/mime(.:format)         action_mailbox/ingresses/mailgun/inbound_emails#create
@@ -175,7 +175,7 @@ rails_blob_representation_proxy GET  /rails/active_storage/representations/proxy
            rails_postmark_inbound_emails POST   /rails/action_mailbox/postmark/inbound_emails(.:format)                                           action_mailbox/ingresses/postmark/inbound_emails#create
               rails_relay_inbound_emails POST   /rails/action_mailbox/relay/inbound_emails(.:format)                                              action_mailbox/ingresses/relay/inbound_emails#create
            rails_sendgrid_inbound_emails POST   /rails/action_mailbox/sendgrid/inbound_emails(.:format)                                           action_mailbox/ingresses/sendgrid/inbound_emails#create
-       rails_amazon_inbound_subscription POST   /rails/action_mailbox/amazon/inbound_emails(.:format)                                             action_mailbox/ingresses/amazon/inbound_emails#subscribe
+              rails_amazon_confirmations POST   /rails/action_mailbox/amazon/inbound_emails(.:format)                                             action_mailbox/ingresses/amazon/confirmations#create
              rails_amazon_inbound_emails POST   /rails/action_mailbox/amazon/inbound_emails(.:format)                                             action_mailbox/ingresses/amazon/inbound_emails#create
      rails_mandrill_inbound_health_check GET    /rails/action_mailbox/mandrill/inbound_emails(.:format)                                           action_mailbox/ingresses/mandrill/inbound_emails#health_check
            rails_mandrill_inbound_emails POST   /rails/action_mailbox/mandrill/inbound_emails(.:format)                                           action_mailbox/ingresses/mandrill/inbound_emails#create
@@ -237,10 +237,10 @@ new_rails_conductor_inbound_email_source GET    /rails/conductor/action_mailbox/
       URI               | /rails/action_mailbox/sendgrid/inbound_emails(.:format)
       Controller#Action | action_mailbox/ingresses/sendgrid/inbound_emails#create
       --[ Route 5 ]--------------
-      Prefix            | rails_amazon_inbound_subscription
+      Prefix            | rails_amazon_confirmations
       Verb              | POST
       URI               | /rails/action_mailbox/amazon/inbound_emails(.:format)
-      Controller#Action | action_mailbox/ingresses/amazon/inbound_emails#subscribe
+      Controller#Action | action_mailbox/ingresses/amazon/confirmations#create
       --[ Route 6 ]--------------
       Prefix            | rails_amazon_inbound_emails
       Verb              | POST
