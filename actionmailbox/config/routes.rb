@@ -7,7 +7,7 @@ Rails.application.routes.draw do
     post "/sendgrid/inbound_emails" => "sendgrid/inbound_emails#create", as: :rails_sendgrid_inbound_emails
 
     # Amazon requires that SNS topic subscriptions have been accepted before sending notifications.
-    post "/amazon/inbound_emails"   => "amazon/inbound_emails#subscribe", as: :rails_amazon_inbound_subscription,
+    post "/amazon/inbound_emails"   => "amazon/confirmations#create", as: :rails_amazon_confirmations,
          constraints: lambda { |request| request.params[:Type] == "SubscriptionConfirmation" }
     post "/amazon/inbound_emails"   => "amazon/inbound_emails#create",    as: :rails_amazon_inbound_emails,
          constraints: lambda { |request| request.params[:Type] == "Notification" }
