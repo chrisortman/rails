@@ -55,78 +55,16 @@ module ActionMailbox
   #
   module Ingresses
     module Amazon
-      class InboundEmailsController < ActionMailbox::BaseController
-        before_action :verify_authenticity
-        before_action :validate_topic
+      class InboundEmailsController < BaseController
+        before_action :ensure_message_content
 
         def create
-          head :bad_request unless mail.present?
-
-          ActionMailbox::InboundEmail.create_and_extract_message_id!(mail)
-          head :no_content
-        end
-
-        def subscribe
-          return head :ok if confirmation_response_code&.start_with?("2")
-
-          Rails.logger.error("SNS subscription confirmation request rejected.")
-          head :unprocessable_entity
+          ActionMailbox::InboundEmail.create_and_extract_message_id! @notification.message_content
         end
 
         private
-          def verify_authenticity
-            head :bad_request unless notification.present?
-            head :unauthorized unless verified?
-          end
-
-          def validate_topic
-            return if valid_topics&.include?(topic)
-
-            Rails.logger.warn("Ignoring unknown topic: #{topic}")
-            head :unauthorized
-          end
-
-          def confirmation_response_code
-            @confirmation_response_code ||= begin
-              Net::HTTP.get_response(URI(notification["SubscribeURL"])).code
-            end
-          end
-
-          def notification
-            @notification ||= JSON.parse(request.body.read)
-          rescue JSON::ParserError => e
-            Rails.logger.warn("Unable to parse SNS notification: #{e}")
-            nil
-          end
-
-          def verified?
-            verifier.authentic?(@notification.to_json)
-          end
-
-          def verifier
-            require "aws-sdk-sns"
-            Aws::SNS::MessageVerifier.new
-          end
-
-          def message
-            @message ||= JSON.parse(notification["Message"])
-          end
-
-          def mail
-            return nil unless notification["Type"] == "Notification"
-            return nil unless message["notificationType"] == "Received"
-
-            message["content"]
-          end
-
-          def topic
-            return nil unless notification.present?
-
-            notification["TopicArn"]
-          end
-
-          def valid_topics
-            ActionMailbox.amazon.subscribed_topics
+          def ensure_message_content
+            head :bad_request if @notification.message_content.blank?
           end
       end
     end
