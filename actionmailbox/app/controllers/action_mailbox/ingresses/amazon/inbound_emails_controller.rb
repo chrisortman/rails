@@ -29,6 +29,7 @@ module ActionMailbox
   # == Usage
   #
   # 1. {Configure SES}[https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-notifications.html] to route emails through SNS. Take note of the topic unique reference (+TopicArn+).
+  #    The option _Enable raw message delivery_ should **not** be selected. See {documentation}[https://docs.aws.amazon.com/sns/latest/dg/sns-large-payload-raw-message-delivery.html] for more details.
   #
   #    {Configure SNS}[https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-action-sns.html] to send notifications to +/rails/action_mailbox/amazon/inbound_emails+.
   #
