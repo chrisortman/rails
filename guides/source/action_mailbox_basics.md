@@ -270,6 +270,7 @@ NOTE: When configuring your SendGrid Inbound Parse webhook, be sure to check the
 [Configure SES](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-notifications.html) to route emails through _SNS_. Take note of the topic unique reference (`TopicArn`).
 
 [Configure SNS](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-action-sns.html) to send notifications to `/rails/action_mailbox/amazon/inbound_emails`.
+The option _Enable raw message delivery_ should **not** be selected. See [documentation](https://docs.aws.amazon.com/sns/latest/dg/sns-large-payload-raw-message-delivery.html) for more details.
 
 If your application is found at https://example.com you would specify the fully-qualified URL https://example.com/rails/action_mailbox/amazon/inbound_emails
 
