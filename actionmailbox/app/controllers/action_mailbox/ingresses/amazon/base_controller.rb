@@ -12,7 +12,8 @@ module ActionMailbox
 
         private
           def set_notification
-            @notification = SnsNotification.new params.except(:controller, :action)
+            parsed_params = JSON.parse(request.raw_post).with_indifferent_access
+            @notification = SnsNotification.new parsed_params
           end
 
           def ensure_valid_topic
