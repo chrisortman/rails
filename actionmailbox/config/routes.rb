@@ -8,9 +8,9 @@ Rails.application.routes.draw do
 
     # Amazon requires that SNS topic subscriptions have been accepted before sending notifications.
     post "/amazon/inbound_emails"   => "amazon/confirmations#create", as: :rails_amazon_confirmations,
-         constraints: lambda { |request| request.params[:Type] == "SubscriptionConfirmation" }
+      constraints: ActionMailbox::Ingresses::Amazon::SnsMessageTypeConstraint.new("SubscriptionConfirmation")
     post "/amazon/inbound_emails"   => "amazon/inbound_emails#create",    as: :rails_amazon_inbound_emails,
-         constraints: lambda { |request| request.params[:Type] == "Notification" }
+      constraints: ActionMailbox::Ingresses::Amazon::SnsMessageTypeConstraint.new("Notification")
 
     # Mandrill checks for the existence of a URL with a HEAD request before it will create the webhook.
     get "/mandrill/inbound_emails"  => "mandrill/inbound_emails#health_check", as: :rails_mandrill_inbound_health_check
