@@ -7,6 +7,6 @@
   "SubscribeURL": "https://sns.eu-west-1.amazonaws.com/?Action=ConfirmSubscription&TopicArn=arn:aws:sns:eu-west-1:111111111111:example-topic&Token=abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234",
   "Timestamp": "2020-05-07T07:25:25.364Z",
   "SignatureVersion": "1",
-  "Signature": "nM93+YpkJErq0qlRSjqt9j1fj5rnrFkMuTq2pGJQe7EuLQjlzjfw5pSABY6h\nk/10f9r4SY5BZNEvYiHZznMFyNH7nLfc3VpWwoG4gryMt2LcpWgSsvPzHTwv\ntJUkwh5EKwf2cDROvylqaYicEEw40fRUSejR6t6geLEY+Rmkjct+tl/rllsL\nxBMhmYuWqyjj1nZ2fqOgY3RUpo1TmdVIF3dwaVwqlov1Uri/x5xmh6ttKLxw\nBJJjFIxr4zjbX/DxazG5pzSxLxcmntb4qlGKmTxcH5sVLmc3/G8yVhkfsnRJ\nk7dK17EtEjrsVVNmgWgq7MyQfNGjVLDKbvX58Npzpw==\n",
+  "Signature": "GAsxK1irVT7qD0bWPNiZkgL+4Kbj+sFxzKd5pYtemNqxjuKdcxWEWBN510Ug\ntMZFq4gKewm/Gi2BXHy6A4Lm2y6DtN27/5EjluE6F15J5rS2bvRvsg1/mCR7\ntlYYYN39IHAqTTyGTtqttX+wHK9doqtHweq5/14CTYKB3+vYlGQWznyrSnrm\nfNnF25snRu+AlNafHvp1023JMP3QA8wcDu9zhQvWasFVHkglAql9aYuOVuvp\nhxeGQQxz/Pc4bm7dNSs5VPDEU5B71hX4lrzDfVG45ogKQatTn63swZy9xvto\n324j2lg2LljAnULQRTXt/iv8rV3L7mXV1CpUQ+qtJA==\n",
   "SigningCertURL": "https://sns.eu-west-1.amazonaws.com/SimpleNotificationService-a86cb10b4e1f29c941702d737128f7b6.pem"
 }

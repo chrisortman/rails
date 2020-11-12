@@ -20,7 +20,7 @@ module ActionMailbox
           # It could be done, but would require knowledge of a one-off command to run
           # or if done during the tests slow them down.
           # Waiting for feedback / discussion to get other opinions.
-          return true if Rails.env.test?
+          #return true if Rails.env.test?
 
           require "aws-sdk-sns"
           Aws::SNS::MessageVerifier.new.authentic?(params.to_json)
@@ -33,7 +33,6 @@ module ActionMailbox
         # This needs to be the raw email message
         def message_content
           if receipt?
-            message = JSON.parse(params[:Message]).with_indifferent_access
             # Assume you want emails greater than 150k an possibly an atatchment,
             # so you will be using S3 to store the raw email and we have to go get it
             action = message.dig(:receipt, :action)
@@ -49,8 +48,21 @@ module ActionMailbox
           end
         end
 
+        def no_content?
+
+          if receipt? && (content_in_s3? || !message["content"].blank?)
+            false
+          else
+            true
+          end
+        end
+
         private
           attr_reader :params
+
+          def content_in_s3?
+            message.dig(:receipt, :action) == "S3"
+          end
 
           def read_content_from_s3(action)
             require 'aws-sdk-s3'
