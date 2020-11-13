@@ -29,6 +29,11 @@ class ActionMailbox::Ingresses::Amazon::InboundEmailsControllerTest < ActionDisp
     @unrecognized_topic = json_fixture("unrecognized_topic_subscription_request")
   end
 
+  teardown do
+    if Kernel.const_defined? :Aws
+      Aws.config[:s3] = {}
+    end
+  end
   test "receiving an inbound email from Amazon" do
     assert_difference -> { ActionMailbox::InboundEmail.count }, +1 do
       post rails_amazon_inbound_emails_url, params: @inbound, as: :json
@@ -44,7 +49,15 @@ class ActionMailbox::Ingresses::Amazon::InboundEmailsControllerTest < ActionDisp
   end
 
   test "receiving an inbound email with an s3 action configured" do
-    stub_request(:head, "https://daylio-uploads20200818192940697500000001.s3.amazonaws.com/17at0jiq08p0449huhf16qsmdi6sa1ltm069t801?partNumber=1").to_return(status: 200, body: @s3_email, headers: {})
+    # stub_request(:head, "https://daylio-uploads20200818192940697500000001.s3.amazonaws.com/17at0jiq08p0449huhf16qsmdi6sa1ltm069t801?partNumber=1").to_return(status: 200, body: @s3_email, headers: {})
+
+    require 'aws-sdk-s3'
+    Aws.config[:s3] = {
+      stub_responses: {
+        head_object: { content_length: @s3_email.size, parts_count: 1},
+        get_object: { body: @s3_email }
+      }
+    }
 
     assert_difference -> { ActionMailbox::InboundEmail.count }, +1 do
       post rails_amazon_inbound_emails_url, params: @inbound_s3, as: :json
@@ -54,7 +67,7 @@ class ActionMailbox::Ingresses::Amazon::InboundEmailsControllerTest < ActionDisp
 
     inbound_email = ActionMailbox::InboundEmail.last
     assert_equal inbound_email.raw_email.download, @s3_email
-    id = "1344C740-07D3-476E-BEE7-6EB162294DF6@uiowa.edu"
+    id = "1344C740-07D3-476E-BEE7-6EB162294DF6@example.com"
     assert_equal inbound_email.message_id, id
 
   end

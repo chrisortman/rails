@@ -40,10 +40,8 @@ module ActionMailbox
             if action[:type] == "S3"
               read_content_from_s3(action)
             else
-              puts "Cannot do anything with action type #{action[:type]}"
+              message["content"]
             end
-
-            message["content"] if receipt?
 
           end
         end
@@ -61,7 +59,7 @@ module ActionMailbox
           attr_reader :params
 
           def content_in_s3?
-            message.dig(:receipt, :action) == "S3"
+            message.dig(:receipt, :action, :type) == "S3"
           end
 
           def read_content_from_s3(action)
