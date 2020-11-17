@@ -65,7 +65,7 @@ module ActionMailbox
 
         private
           def ensure_message_content
-            head :bad_request if @notification.message_content.blank?
+            head :bad_request if @notification.no_content?
           end
       end
     end
