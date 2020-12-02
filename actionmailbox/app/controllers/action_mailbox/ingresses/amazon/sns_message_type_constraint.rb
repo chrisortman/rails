@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActionMailbox
   module Ingresses
     module Amazon
@@ -11,15 +13,13 @@ module ActionMailbox
         end
 
         private
-
-        def message_type(request)
-          if request.content_mime_type.text?
-            request.headers['X-AMZ-SNS-MESSAGE-TYPE']
-          elsif request.content_mime_type.json?
-            request.params[:Type]
+          def message_type(request)
+            if request.content_mime_type.text?
+              request.headers["X-AMZ-SNS-MESSAGE-TYPE"]
+            elsif request.content_mime_type.json?
+              request.params[:Type]
+            end
           end
-        end
-
       end
     end
   end

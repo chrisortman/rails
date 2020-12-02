@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require 'tempfile'
+
+require "tempfile"
 
 module ActionMailbox
   module Ingresses
@@ -39,7 +40,6 @@ module ActionMailbox
         end
 
         def no_content?
-
           if receipt? && (content_in_s3? || !message["content"].blank?)
             false
           else
@@ -55,12 +55,12 @@ module ActionMailbox
           end
 
           def read_content_from_s3(action)
-            require 'aws-sdk-s3'
+            require "aws-sdk-s3"
 
             bucket_name = action[:bucketName]
             object_key = action[:objectKey]
-            guess_region = action[:topicArn].split(':')[3]
-            s3 = Aws::S3::Resource.new(region: guess_region )
+            guess_region = action[:topicArn].split(":")[3]
+            s3 = Aws::S3::Resource.new(region: guess_region)
             obj = s3.bucket(bucket_name).object(object_key)
             begin
               temp = Tempfile.new
@@ -74,7 +74,6 @@ module ActionMailbox
           end
 
           def message
-
             @message ||= JSON.parse(params[:Message]).with_indifferent_access
           end
 

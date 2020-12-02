@@ -1,6 +1,7 @@
 *   Add Amazon SES/SNS ingress.
 
     *Bob Farrell*
+    *Chris Ortman*
     
 ## Rails 6.1.0 (December 09, 2020) ##
 

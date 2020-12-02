@@ -49,11 +49,10 @@ class ActionMailbox::Ingresses::Amazon::InboundEmailsControllerTest < ActionDisp
   end
 
   test "receiving an inbound email with an s3 action configured" do
-
-    require 'aws-sdk-s3'
+    require "aws-sdk-s3"
     Aws.config[:s3] = {
       stub_responses: {
-        head_object: { content_length: @s3_email.size, parts_count: 1},
+        head_object: { content_length: @s3_email.size, parts_count: 1 },
         get_object: { body: @s3_email }
       }
     }
@@ -68,8 +67,8 @@ class ActionMailbox::Ingresses::Amazon::InboundEmailsControllerTest < ActionDisp
     assert_equal inbound_email.raw_email.download, @s3_email
     id = "1344C740-07D3-476E-BEE7-6EB162294DF6@example.com"
     assert_equal inbound_email.message_id, id
-
   end
+
   test "accepting subscriptions to recognized topics" do
     params = {
       Action: "ConfirmSubscription",
