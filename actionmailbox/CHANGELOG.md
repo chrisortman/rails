@@ -1,3 +1,7 @@
+*   Add Amazon SES/SNS ingress.
+
+    *Bob Farrell*
+    
 ## Rails 6.1.0 (December 09, 2020) ##
 
 *   Change default queue name of the incineration (`:action_mailbox_incineration`) and
