@@ -1,3 +1,48 @@
+## Rails 6.1.3.1 (March 26, 2021) ##
+
+*   No changes.
+
+
+## Rails 6.1.3 (February 17, 2021) ##
+
+*   Re-define routes when not set correctly via inheritance.
+
+    *John Hawthorn*
+
+
+## Rails 6.1.2.1 (February 10, 2021) ##
+
+*   Prevent open redirect when allowed host starts with a dot
+
+    [CVE-2021-22881]
+
+    Thanks to @tktech (https://hackerone.com/tktech) for reporting this
+    issue and the patch!
+
+    *Aaron Patterson*
+
+
+## Rails 6.1.2 (February 09, 2021) ##
+
+*   Fix error in `ActionController::LogSubscriber` that would happen when throwing inside a controller action.
+
+    *Janko Marohnić*
+
+*   Fix `fixture_file_upload` deprecation when `file_fixture_path` is a relative path.
+
+    *Eugene Kenny*
+
+
+## Rails 6.1.1 (January 07, 2021) ##
+
+*   Fix nil translation key lookup in controllers/
+
+    *Jan Klimo*
+
+*   Quietly handle unknown HTTP methods in Action Dispatch SSL middleware.
+
+    *Alex Robbin*
+
 *   Change the request method to a `GET` when passing failed requests down to `config.exceptions_app`.
 
     *Alex Robbin*

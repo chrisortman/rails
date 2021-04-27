@@ -56,6 +56,7 @@ class Time
         at_without_coercion(time_or_number)
       end
     end
+    ruby2_keywords(:at_with_coercion) if respond_to?(:ruby2_keywords, true)
     alias_method :at_without_coercion, :at
     alias_method :at, :at_with_coercion
 

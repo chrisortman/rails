@@ -1,3 +1,172 @@
+*   Changed Arel predications `contains` and `overlaps` to use
+    `quoted_node` so that PostgreSQL arrays are quoted properly.
+
+    *Bradley Priest*
+
+
+## Rails 6.1.3.1 (March 26, 2021) ##
+
+*   No changes.
+
+
+## Rails 6.1.3 (February 17, 2021) ##
+
+*   Fix the MySQL adapter to always set the right collation and charset
+    to the connection session.
+
+    *Rafael Mendonça França*
+
+*   Fix MySQL adapter handling of time objects when prepared statements
+    are enabled.
+
+    *Rafael Mendonça França*
+
+*   Fix scoping in enum fields using conditions that would generate
+    an `IN` clause.
+
+    *Ryuta Kamizono*
+
+*   Skip optimised #exist? query when #include? is called on a relation
+    with a having clause
+
+    Relations that have aliased select values AND a having clause that
+    references an aliased select value would generate an error when
+    #include? was called, due to an optimisation that would generate
+    call #exists? on the relation instead, which effectively alters
+    the select values of the query (and thus removes the aliased select
+    values), but leaves the having clause intact. Because the having
+    clause is then referencing an aliased column that is no longer
+    present in the simplified query, an ActiveRecord::InvalidStatement
+    error was raised.
+
+    An sample query affected by this problem:
+
+    ```ruby
+    Author.select('COUNT(*) as total_posts', 'authors.*')
+          .joins(:posts)
+          .group(:id)
+          .having('total_posts > 2')
+          .include?(Author.first)
+    ```
+
+    This change adds an addition check to the condition that skips the
+    simplified #exists? query, which simply checks for the presence of
+    a having clause.
+
+    Fixes #41417
+
+    *Michael Smart*
+
+*   Increment postgres prepared statement counter before making a prepared statement, so if the statement is aborted
+    without Rails knowledge (e.g., if app gets kill -9d during long-running query or due to Rack::Timeout), app won't end
+    up in perpetual crash state for being inconsistent with Postgres.
+
+    *wbharding*, *Martin Tepper*
+
+
+## Rails 6.1.2.1 (February 10, 2021) ##
+
+*   Fix possible DoS vector in PostgreSQL money type
+
+    Carefully crafted input can cause a DoS via the regular expressions used
+    for validating the money format in the PostgreSQL adapter.  This patch
+    fixes the regexp.
+
+    Thanks to @dee-see from Hackerone for this patch!
+
+    [CVE-2021-22880]
+
+    *Aaron Patterson*
+
+
+## Rails 6.1.2 (February 09, 2021) ##
+
+*   Fix timestamp type for sqlite3.
+
+    *Eileen M. Uchitelle*
+
+*   Make destroy async transactional.
+
+    An active record rollback could occur while enqueuing a job. In this
+    case the job would enqueue even though the database deletion
+    rolledback putting things in a funky state.
+
+    Now the jobs are only enqueued until after the db transaction has been committed.
+
+    *Cory Gwin*
+
+*   Fix malformed packet error in MySQL statement for connection configuration.
+
+    *robinroestenburg*
+
+*   Connection specification now passes the "url" key as a configuration for the
+    adapter if the "url" protocol is "jdbc", "http", or "https". Previously only
+    urls with the "jdbc" prefix were passed to the Active Record Adapter, others
+    are assumed to be adapter specification urls.
+
+    Fixes #41137.
+
+    *Jonathan Bracy*
+
+*   Fix granular connection swapping when there are multiple abstract classes.
+
+    *Eileen M. Uchitelle*
+
+*   Fix `find_by` with custom primary key for belongs_to association.
+
+    *Ryuta Kamizono*
+
+*   Add support for `rails console --sandbox` for multiple database applications.
+
+    *alpaca-tc*
+
+*   Fix `where` on polymorphic association with empty array.
+
+    *Ryuta Kamizono*
+
+*   Fix preventing writes for `ApplicationRecord`.
+
+    *Eileen M. Uchitelle*
+
+
+## Rails 6.1.1 (January 07, 2021) ##
+
+*   Fix fixtures loading when strict loading is enabled for the association.
+
+    *Alex Ghiculescu*
+
+*   Fix `where` with custom primary key for belongs_to association.
+
+    *Ryuta Kamizono*
+
+*   Fix `where` with aliased associations.
+
+    *Ryuta Kamizono*
+
+*   Fix `composed_of` with symbol mapping.
+
+    *Ryuta Kamizono*
+
+*   Don't skip money's type cast for pluck and calculations.
+
+    *Ryuta Kamizono*
+
+*   Fix `where` on polymorphic association with non Active Record object.
+
+    *Ryuta Kamizono*
+
+*   Make sure `db:prepare` works even the schema file doesn't exist.
+
+    *Rafael Mendonça França*
+
+*   Fix complicated `has_many :through` with nested where condition.
+
+    *Ryuta Kamizono*
+
+*   Handle STI models for `has_many dependent: :destroy_async`.
+
+    *Muhammad Usman*
+
 *   Restore possibility of passing `false` to :polymorphic option of `belongs_to`.
 
     Previously, passing `false` would trigger the option validation logic

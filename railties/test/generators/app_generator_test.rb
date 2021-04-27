@@ -107,11 +107,22 @@ class AppGeneratorTest < Rails::Generators::TestCase
   end
 
   def test_skip_bundle
-    assert_not_called(generator([destination_root], skip_bundle: true, skip_webpack_install: true), :bundle_command) do
-      quietly { generator.invoke_all }
+    assert_not_called(generator([destination_root], skip_bundle: true), :bundle_command) do
+      output = capture(:stdout) { generator.invoke_all }
       # skip_bundle is only about running bundle install, ensure the Gemfile is still
       # generated.
       assert_file "Gemfile"
+      assert_webpack_installation_skipped(output)
+    end
+  end
+
+  def test_skip_gemfile
+    assert_not_called(generator([destination_root], skip_gemfile: true), :bundle_command) do
+      output = capture(:stdout) { generator.invoke_all }
+      # skip_bundle is only about running bundle install, ensure the Gemfile is still
+      # generated.
+      assert_no_file "Gemfile"
+      assert_webpack_installation_skipped(output)
     end
   end
 
@@ -852,14 +863,14 @@ class AppGeneratorTest < Rails::Generators::TestCase
     generator([destination_root], edge: true, skip_webpack_install: true)
 
     assert_bundler_command_called("install")
-    assert_file "Gemfile", %r{^gem\s+["']rails["'],\s+github:\s+["']#{Regexp.escape("rails/rails")}["']$}
+    assert_file "Gemfile", %r{^gem\s+["']rails["'],\s+github:\s+["']#{Regexp.escape("rails/rails")}["'],\s+branch:\s+["']#{Regexp.escape("6-1-stable")}["']$}
   end
 
   def test_master_option
     generator([destination_root], master: true, skip_webpack_install: true)
 
     assert_bundler_command_called("install")
-    assert_file "Gemfile", %r{^gem\s+["']rails["'],\s+github:\s+["']#{Regexp.escape("rails/rails")}["'],\s+branch:\s+["']master["']$}
+    assert_file "Gemfile", %r{^gem\s+["']rails["'],\s+github:\s+["']#{Regexp.escape("rails/rails")}["'],\s+branch:\s+["']main["']$}
   end
 
   def test_spring
@@ -1246,5 +1257,23 @@ class AppGeneratorTest < Rails::Generators::TestCase
       end
 
       assert_equal 1, called, "`#{target_command}` expected to be called once, but was called #{called} times."
+    end
+
+    def assert_webpack_installation_skipped(output)
+      assert_match(/^Skipping `rails webpacker:install`/, output)
+
+      %w(
+        .browserslistrc
+        babel.config.js
+        bin/webpack
+        bin/webpack-dev-server
+        config/webpack
+        config/webpack/development.js
+        config/webpack/environment.js
+        config/webpack/production.js
+        config/webpack/test.js
+        config/webpacker.yml
+        postcss.config.js
+      ).each { |f| assert_no_file(f) }
     end
 end

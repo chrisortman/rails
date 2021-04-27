@@ -168,7 +168,7 @@ ActiveRecord::Schema.define do
     t.integer :categorizations_count
   end
 
-  create_table :categories_posts, force: true, id: false do |t|
+  create_table :categories_posts, force: true do |t|
     t.integer :category_id, null: false
     t.integer :post_id, null: false
   end
@@ -225,6 +225,7 @@ ActiveRecord::Schema.define do
     t.datetime :updated_at
     t.datetime :deleted_at
     t.integer :comments
+    t.integer :company
   end
 
   create_table :companies, force: true do |t|
@@ -407,6 +408,7 @@ ActiveRecord::Schema.define do
   end
 
   create_table :essays, force: true do |t|
+    t.string :type
     t.string :name
     t.string :writer_id
     t.string :writer_type

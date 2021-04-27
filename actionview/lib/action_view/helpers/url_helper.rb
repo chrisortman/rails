@@ -539,7 +539,7 @@ module ActionView
       #
       # We can also pass in the symbol arguments instead of strings.
       #
-      def current_page?(options, check_parameters: false)
+      def current_page?(options = nil, check_parameters: false, **options_as_kwargs)
         unless request
           raise "You cannot use helpers that need to determine the current " \
                 "page unless your view context provides a Request object " \
@@ -548,6 +548,7 @@ module ActionView
 
         return false unless request.get? || request.head?
 
+        options ||= options_as_kwargs
         check_parameters ||= options.is_a?(Hash) && options.delete(:check_parameters)
         url_string = URI::DEFAULT_PARSER.unescape(url_for(options)).force_encoding(Encoding::BINARY)
 
@@ -567,6 +568,19 @@ module ActionView
           url_string == "#{request.protocol}#{request.host_with_port}#{request_uri}"
         else
           url_string == request_uri
+        end
+      end
+
+      if RUBY_VERSION.start_with?("2.7")
+        using Module.new {
+          refine UrlHelper do
+            alias :_current_page? :current_page?
+          end
+        }
+
+        def current_page?(*args) # :nodoc:
+          options = args.pop
+          options.is_a?(Hash) ? _current_page?(*args, **options) : _current_page?(*args, options)
         end
       end
 

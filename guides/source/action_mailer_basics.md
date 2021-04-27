@@ -44,7 +44,7 @@ views.
 #### Create the Mailer
 
 ```bash
-$ bin/rails generate mailer UserMailer
+$ bin/rails generate mailer User
 create  app/mailers/user_mailer.rb
 create  app/mailers/application_mailer.rb
 invoke  erb
@@ -581,7 +581,7 @@ URL helper.
 <%= user_url(@user, host: 'example.com') %>
 ```
 
-NOTE: non-`GET` links require [rails-ujs](https://github.com/rails/rails/blob/master/actionview/app/assets/javascripts) or
+NOTE: non-`GET` links require [rails-ujs](https://github.com/rails/rails/blob/main/actionview/app/assets/javascripts) or
 [jQuery UJS](https://github.com/rails/jquery-ujs), and won't work in mailer templates.
 They will result in normal `GET` requests.
 

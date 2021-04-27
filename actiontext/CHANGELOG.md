@@ -1,3 +1,28 @@
+## Rails 6.1.3.1 (March 26, 2021) ##
+
+*   No changes.
+
+
+## Rails 6.1.3 (February 17, 2021) ##
+
+*   No changes.
+
+
+## Rails 6.1.2.1 (February 10, 2021) ##
+
+*   No changes.
+
+
+## Rails 6.1.2 (February 09, 2021) ##
+
+*   No changes.
+
+
+## Rails 6.1.1 (January 07, 2021) ##
+
+*   No changes.
+
+
 ## Rails 6.1.0 (December 09, 2020) ##
 
 *   Declare `ActionText::FixtureSet.attachment` to generate an

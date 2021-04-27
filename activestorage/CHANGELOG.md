@@ -1,3 +1,38 @@
+*   `ActiveStorage::PreviewError` is raised when a previewer is unable to generate a preview image.
+
+    *Alex Robbin*
+
+
+## Rails 6.1.3.1 (March 26, 2021) ##
+
+*  Marcel is upgraded to version 1.0.0 to avoid a dependency on GPL-licensed
+   mime types data.
+
+   *George Claghorn*
+
+
+## Rails 6.1.3 (February 17, 2021) ##
+
+*   No changes.
+
+
+## Rails 6.1.2.1 (February 10, 2021) ##
+
+*   No changes.
+
+
+## Rails 6.1.2 (February 09, 2021) ##
+
+*   No changes.
+
+
+## Rails 6.1.1 (January 07, 2021) ##
+
+*   Fix S3 multipart uploads when threshold is larger than file.
+
+    *Matt Muller*
+
+
 ## Rails 6.1.0 (December 09, 2020) ##
 
 *   Change default queue name of the analysis (`:active_storage_analysis`) and

@@ -212,6 +212,26 @@ class RelationScopingTest < ActiveRecord::TestCase
     assert_includes Post.find(1).comments, new_comment
   end
 
+  def test_scoped_create_with_where_with_array
+    new_comment = VerySpecialComment.where(label: [0, 1], post_id: 1).scoping do
+      VerySpecialComment.create body: "Wonderful world"
+    end
+
+    assert_equal 1, new_comment.post_id
+    assert_equal "default", new_comment.label
+    assert_includes Post.find(1).comments, new_comment
+  end
+
+  def test_scoped_create_with_where_with_range
+    new_comment = VerySpecialComment.where(label: 0..1, post_id: 1).scoping do
+      VerySpecialComment.create body: "Wonderful world"
+    end
+
+    assert_equal 1, new_comment.post_id
+    assert_equal "default", new_comment.label
+    assert_includes Post.find(1).comments, new_comment
+  end
+
   def test_scoped_create_with_create_with
     new_comment = VerySpecialComment.create_with(post_id: 1).scoping do
       VerySpecialComment.create body: "Wonderful world"
@@ -419,7 +439,7 @@ class HasManyScopingTest < ActiveRecord::TestCase
   end
 
   def test_forwarding_to_scoped
-    assert_equal 4, Comment.search_by_type("Comment").size
+    assert_equal 5, Comment.search_by_type("Comment").size
     assert_equal 2, @welcome.comments.search_by_type("Comment").size
   end
 

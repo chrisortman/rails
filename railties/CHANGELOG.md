@@ -1,3 +1,33 @@
+*   Ensure `Rails.application.config_for` always cast hashes to `ActiveSupport::OrderedOptions`.
+
+    *Jean Boussier*
+
+## Rails 6.1.3.1 (March 26, 2021) ##
+
+*   No changes.
+
+
+## Rails 6.1.3 (February 17, 2021) ##
+
+*   No changes.
+
+
+## Rails 6.1.2.1 (February 10, 2021) ##
+
+*   No changes.
+
+
+## Rails 6.1.2 (February 09, 2021) ##
+
+*   No changes.
+
+
+## Rails 6.1.1 (January 07, 2021) ##
+
+*   Allow spaces in path to Yarn binstub and only run on precompile if needed.
+
+    *Markus Doits*
+
 *   Populate ARGV for app template.
 
     Fixes #40945.

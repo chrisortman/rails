@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "set"
-require "active_record/connection_adapters/schema_cache"
 require "active_record/connection_adapters/sql_type_metadata"
 require "active_record/connection_adapters/abstract/schema_dumper"
 require "active_record/connection_adapters/abstract/schema_creation"
@@ -111,22 +110,21 @@ module ActiveRecord
         @config.fetch(:use_metadata_table, true)
       end
 
-      # Determines whether writes are currently being prevents.
+      # Determines whether writes are currently being prevented.
       #
       # Returns true if the connection is a replica.
       #
       # If the application is using legacy handling, returns
-      # true if `connection_handler.prevent_writes` is set.
+      # true if +connection_handler.prevent_writes+ is set.
       #
       # If the application is using the new connection handling
-      # will return true based on `current_preventing_writes`.
+      # will return true based on +current_preventing_writes+.
       def preventing_writes?
         return true if replica?
         return ActiveRecord::Base.connection_handler.prevent_writes if ActiveRecord::Base.legacy_connection_handling
-        return false if owner_name.nil?
+        return false if connection_klass.nil?
 
-        klass = self.owner_name.safe_constantize
-        klass&.current_preventing_writes
+        connection_klass.current_preventing_writes
       end
 
       def migrations_paths # :nodoc:
@@ -155,9 +153,10 @@ module ActiveRecord
                               end
       end
 
-      def prepared_statements
+      def prepared_statements?
         @prepared_statements && !prepared_statements_disabled_cache.include?(object_id)
       end
+      alias :prepared_statements :prepared_statements?
 
       def prepared_statements_disabled_cache # :nodoc:
         Thread.current[:ar_prepared_statements_disabled_cache] ||= Set.new
@@ -202,8 +201,8 @@ module ActiveRecord
         @owner = Thread.current
       end
 
-      def owner_name # :nodoc:
-        @pool.owner_name
+      def connection_klass # :nodoc:
+        @pool.connection_klass
       end
 
       def schema_cache
@@ -251,7 +250,7 @@ module ActiveRecord
       end
 
       def unprepared_statement
-        cache = prepared_statements_disabled_cache.add(object_id) if @prepared_statements
+        cache = prepared_statements_disabled_cache.add?(object_id) if @prepared_statements
         yield
       ensure
         cache&.delete(object_id)

@@ -222,6 +222,20 @@ class StrictLoadingTest < ActiveRecord::TestCase
     end
   end
 
+  def test_strict_loading_can_be_turned_off_on_an_association_in_a_model_with_strict_loading_on
+    with_strict_loading_by_default(Developer) do
+      mentor = Mentor.create!(name: "Mentor")
+
+      developer = Developer.first
+      developer.update_column(:mentor_id, mentor.id)
+
+      assert_nothing_raised do
+        developer.strict_loading_off_mentor
+      end
+    end
+  end
+
+
   def test_does_not_raise_on_eager_loading_a_strict_loading_belongs_to_relation
     mentor = Mentor.create!(name: "Mentor")
 
@@ -407,7 +421,7 @@ class StrictLoadingTest < ActiveRecord::TestCase
     developer.strict_loading!
     assert_predicate developer, :strict_loading?
 
-    assert_logged("Strict loading violation: AuditLog lazily loaded on Developer.") do
+    assert_logged("Strict loading violation: Developer is marked for strict loading. The AuditLog association named :audit_logs cannot be lazily loaded.") do
       developer.audit_logs.to_a
     end
   ensure

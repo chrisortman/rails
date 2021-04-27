@@ -196,7 +196,7 @@ module ActiveRecord
         else
           connected_to_stack.reverse_each do |hash|
             return hash[:role] if hash[:role] && hash[:klasses].include?(Base)
-            return hash[:role] if hash[:role] && hash[:klasses].include?(abstract_base_class)
+            return hash[:role] if hash[:role] && hash[:klasses].include?(connection_classes)
           end
 
           default_role
@@ -215,7 +215,7 @@ module ActiveRecord
       def self.current_shard
         connected_to_stack.reverse_each do |hash|
           return hash[:shard] if hash[:shard] && hash[:klasses].include?(Base)
-          return hash[:shard] if hash[:shard] && hash[:klasses].include?(abstract_base_class)
+          return hash[:shard] if hash[:shard] && hash[:klasses].include?(connection_classes)
         end
 
         default_shard
@@ -237,7 +237,7 @@ module ActiveRecord
         else
           connected_to_stack.reverse_each do |hash|
             return hash[:prevent_writes] if !hash[:prevent_writes].nil? && hash[:klasses].include?(Base)
-            return hash[:prevent_writes] if !hash[:prevent_writes].nil? && hash[:klasses].include?(abstract_base_class)
+            return hash[:prevent_writes] if !hash[:prevent_writes].nil? && hash[:klasses].include?(connection_classes)
           end
 
           false
@@ -254,11 +254,23 @@ module ActiveRecord
         end
       end
 
-      def self.abstract_base_class # :nodoc:
+      def self.connection_class=(b) # :nodoc:
+        @connection_class = b
+      end
+
+      def self.connection_class # :nodoc
+        @connection_class ||= false
+      end
+
+      def self.connection_class? # :nodoc:
+        self.connection_class
+      end
+
+      def self.connection_classes # :nodoc:
         klass = self
 
         until klass == Base
-          break if klass.abstract_class?
+          break if klass.connection_class?
           klass = klass.superclass
         end
 
@@ -277,14 +289,14 @@ module ActiveRecord
       self.default_role = writing_role
       self.default_shard = :default
 
-      def self.strict_loading_violation!(owner:, association:) # :nodoc:
+      def self.strict_loading_violation!(owner:, reflection:) # :nodoc:
         case action_on_strict_loading_violation
         when :raise
-          message = "`#{association}` called on `#{owner}` is marked for strict_loading and cannot be lazily loaded."
+          message = "`#{owner}` is marked for strict_loading. The `#{reflection.klass}` association named `:#{reflection.name}` cannot be lazily loaded."
           raise ActiveRecord::StrictLoadingViolationError.new(message)
         when :log
           name = "strict_loading_violation.active_record"
-          ActiveSupport::Notifications.instrument(name, owner: owner, association: association)
+          ActiveSupport::Notifications.instrument(name, owner: owner, reflection: reflection)
         end
       end
     end
@@ -332,31 +344,37 @@ module ActiveRecord
         hash = args.first
         return super unless Hash === hash
 
-        values = hash.values.map! { |value| value.respond_to?(:id) ? value.id : value }
-        return super if values.any? { |v| StatementCache.unsupported_value?(v) }
+        hash = hash.each_with_object({}) do |(key, value), h|
+          key = key.to_s
+          key = attribute_aliases[key] || key
 
-        keys = hash.keys.map! do |key|
-          attribute_aliases[name = key.to_s] || begin
-            reflection = _reflect_on_association(name)
-            if reflection&.belongs_to? && !reflection.polymorphic?
-              reflection.join_foreign_key
-            elsif reflect_on_aggregation(name)
-              return super
-            else
-              name
-            end
+          return super if reflect_on_aggregation(key)
+
+          reflection = _reflect_on_association(key)
+
+          if !reflection
+            value = value.id if value.respond_to?(:id)
+          elsif reflection.belongs_to? && !reflection.polymorphic?
+            key = reflection.join_foreign_key
+            pkey = reflection.join_primary_key
+            value = value.public_send(pkey) if value.respond_to?(pkey)
           end
+
+          if !columns_hash.key?(key) || StatementCache.unsupported_value?(value)
+            return super
+          end
+
+          h[key] = value
         end
 
-        return super unless keys.all? { |k| columns_hash.key?(k) }
-
+        keys = hash.keys
         statement = cached_find_by_statement(keys) { |params|
           wheres = keys.index_with { params.bind }
           where(wheres).limit(1)
         }
 
         begin
-          statement.execute(values, connection).first
+          statement.execute(hash.values, connection).first
         rescue TypeError
           raise ActiveRecord::StatementInvalid
         end
@@ -390,7 +408,21 @@ module ActiveRecord
       end
 
       # Specifies columns which shouldn't be exposed while calling +#inspect+.
-      attr_writer :filter_attributes
+      def filter_attributes=(filter_attributes)
+        @inspection_filter = nil
+        @filter_attributes = filter_attributes
+      end
+
+      def inspection_filter # :nodoc:
+        if defined?(@filter_attributes)
+          @inspection_filter ||= begin
+            mask = InspectionMask.new(ActiveSupport::ParameterFilter::FILTERED)
+            ActiveSupport::ParameterFilter.new(@filter_attributes, mask: mask)
+          end
+        else
+          superclass.inspection_filter
+        end
+      end
 
       # Returns a string like 'Post(id:integer, title:string, body:text)'
       def inspect # :nodoc:
@@ -758,10 +790,7 @@ module ActiveRecord
       private_constant :InspectionMask
 
       def inspection_filter
-        @inspection_filter ||= begin
-          mask = InspectionMask.new(ActiveSupport::ParameterFilter::FILTERED)
-          ActiveSupport::ParameterFilter.new(self.class.filter_attributes, mask: mask)
-        end
+        self.class.inspection_filter
       end
   end
 end

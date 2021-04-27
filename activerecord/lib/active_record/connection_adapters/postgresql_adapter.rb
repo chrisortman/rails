@@ -227,11 +227,7 @@ module ActiveRecord
         end
 
         def next_key
-          "a#{@counter + 1}"
-        end
-
-        def []=(sql, key)
-          super.tap { @counter += 1 }
+          "a#{@counter += 1}"
         end
 
         private
@@ -649,9 +645,7 @@ module ActiveRecord
             raise ActiveRecord::ReadOnlyError, "Write query attempted while in readonly mode: #{sql}"
           end
 
-          if without_prepared_statement?(binds)
-            result = exec_no_cache(sql, name, [])
-          elsif !prepare
+          if !prepare || without_prepared_statement?(binds)
             result = exec_no_cache(sql, name, binds)
           else
             result = exec_cache(sql, name, binds)
