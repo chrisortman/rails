@@ -1,3 +1,10 @@
+## Rails 6.1.4 (June 24, 2021) ##
+
+*   Always render attachment partials as HTML with `:html` format inside trix editor.
+
+    *James Brooks*
+
+
 ## Rails 6.1.3.2 (May 05, 2021) ##
 
 *   No changes.

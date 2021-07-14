@@ -1,3 +1,14 @@
+## Rails 6.1.4 (June 24, 2021) ##
+
+*   The parameters sent to `ffmpeg` for generating a video preview image are now
+    configurable under `config.active_storage.video_preview_arguments`.
+
+    *Brendon Muir*
+
+*   Fix Active Storage update task when running in an engine.
+
+    *Justin Malčić*
+
 *   Don't raise an error if the mime type is not recognized.
 
     Fixes #41777.
@@ -7,6 +18,14 @@
 *   `ActiveStorage::PreviewError` is raised when a previewer is unable to generate a preview image.
 
     *Alex Robbin*
+
+*   respond with 404 given invalid variation key when asking for representations.
+
+    *George Claghorn*
+
+*   `Blob` creation shouldn't crash if no service selected.
+
+    *Alex Ghiculescu*
 
 
 ## Rails 6.1.3.2 (May 05, 2021) ##

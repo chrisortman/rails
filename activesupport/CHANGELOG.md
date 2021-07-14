@@ -1,3 +1,43 @@
+*   `Time#change` and methods that call it (eg. `Time#advance`) will now
+    return a `Time` with the timezone argument provided, if the caller was
+    initialized with a timezone argument.
+
+    Fixes [#42467](https://github.com/rails/rails/issues/42467).
+
+    *Alex Ghiculescu*
+
+
+## Rails 6.1.4 (June 24, 2021) ##
+
+*   MemCacheStore: convert any underlying value (including `false`) to an `Entry`.
+
+    See [#42559](https://github.com/rails/rails/pull/42559).
+
+    *Alex Ghiculescu*
+
+*   Fix bug in `number_with_precision` when using large `BigDecimal` values.
+
+    Fixes #42302.
+
+    *Federico Aldunate*, *Zachary Scott*
+
+*   Check byte size instead of length on `secure_compare`.
+
+    *Tietew*
+
+*   Fix `Time.at` to not lose `:in` option.
+
+    *Ryuta Kamizono*
+
+*   Require a path for `config.cache_store = :file_store`.
+
+    *Alex Ghiculescu*
+
+*   Avoid having to store complex object in the default translation file.
+
+    *Rafael Mendonça França*
+
+
 ## Rails 6.1.3.2 (May 05, 2021) ##
 
 *   No changes.
